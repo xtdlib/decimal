@@ -13,6 +13,13 @@ type Decimal struct {
 	decimal.Decimal
 }
 
+// Register registers the pgxdecimal.Decimal type with the given pgtype.Map so
+// that pgx will use it as the default Go type for PostgreSQL "numeric" columns.
+func Register(m *pgtype.Map) {
+	m.RegisterDefaultPgType(Decimal{}, "numeric")
+	m.RegisterDefaultPgType(&Decimal{}, "numeric")
+}
+
 func (d *Decimal) ScanNumeric(v pgtype.Numeric) error {
 	if !v.Valid {
 		return fmt.Errorf("cannot scan NULL into *decimal.Decimal")
